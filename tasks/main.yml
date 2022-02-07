@@ -1,0 +1,34 @@
+---
+# tasks file for centos8repo
+
+# https://stackoverflow.com/questions/70926799/centos-through-vm-no-urls-in-mirrorlist
+- name: patch repo for CentOS 8
+  block:
+
+    - name: ensure target files are saved
+      find:
+        pattern: "CentOS-Linux-*.repo"
+        path: /etc/yum.repos.d/
+      register: repofiles
+
+    # TODO: use nested loop https://stackoverflow.com/questions/39539337/replace-several-words-in-matching-files-using-ansible
+    - name: ensure mirrorlist is not activated - patch 1a
+      replace:
+        dest: "{{ item.path }}"
+        regexp: ^mirrorlist
+        replace: '#mirrorlist'
+        backup: true
+      loop: "{{ repofiles.files }}"
+      loop_control:
+        label: "{{ item.path }}"
+    - name: ensure baseurl is activated and points to correct location - patch 1b
+      replace:
+        dest: "{{ item.path }}"
+        regexp: ^#?baseurl=http://mirror.centos.org
+        replace: baseurl=http://vault.centos.org
+        backup: true
+      loop: "{{ repofiles.files }}"
+      loop_control:
+        label: "{{ item.path }}"
+
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "8"
