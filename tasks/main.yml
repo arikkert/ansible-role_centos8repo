@@ -5,14 +5,14 @@
 - name: patch repo for CentOS 8
   block:
 
-    - name: ensure target files are saved
+    - name: Ensure target files are saved
       ansible.builtin.find:
         pattern: "CentOS-Linux-*.repo"
         path: /etc/yum.repos.d/
       register: repofiles
 
     # TODO: use nested loop https://stackoverflow.com/questions/39539337/replace-several-words-in-matching-files-using-ansible
-    - name: ensure mirrorlist is not activated - patch 1a
+    - name: Ensure mirrorlist is not activated - patch 1a
       ansible.builtin.replace:
         dest: "{{ item.path }}"
         regexp: ^mirrorlist
@@ -21,7 +21,7 @@
       loop: "{{ repofiles.files }}"
       loop_control:
         label: "{{ item.path }}"
-    - name: ensure baseurl is activated and points to correct location - patch 1b
+    - name: Ensure baseurl is activated and points to correct location - patch 1b
       ansible.builtin.replace:
         dest: "{{ item.path }}"
         regexp: ^#?baseurl=http://mirror.centos.org
