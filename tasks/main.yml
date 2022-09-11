@@ -2,7 +2,7 @@
 # tasks file for centos8repo
 
 # https://stackoverflow.com/questions/70926799/centos-through-vm-no-urls-in-mirrorlist
-- name: patch repo for CentOS 8
+- name: Patch repo for CentOS 8
   block:
 
     - name: Ensure target files are saved
